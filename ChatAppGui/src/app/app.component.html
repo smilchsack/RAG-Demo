@@ -1,0 +1,65 @@
+<div class="container">
+  <h1 style="text-align: center; margin: 1em;">RAG Beispiel - Rede mit deinen Dokumenten</h1>
+
+  <div class="row card alert alert-primary" role="alert">
+    Es handelt sich um eine einfache ChatApp, mit der Sie Dokumente befragen können. Die Anwendung kennt ein Paper
+    zu Milvus und HNSW, sowie zwei Webseiten zu HNSW. Als lokales Modell wird Mistral eingesetzt. Zum Speichern der Dokumente kommt Milvus zum
+    Einsatz. <br> <br>
+
+    Für die Vektorsuche können mit den folgenden beiden Dropdowns Parameter verändert werden.<br><br>
+
+    Max. Embeddings: Die maximale Anzahl der zurückgegebenen Einbettungen. Falls Einbettungen gefunden wurden.<br><br>
+
+    Relevanzwert: Der minimale Relevanzwert, der zwischen 0 und 1 (einschließlich) liegt.
+    Es werden nur Einbettungen mit einer Punktzahl von diesem oder einem höheren Wert zurückgegeben. Dabei bedeutet 0
+    nicht relevant und 1 sehr relevant.<br> <br>
+
+    Fragen Sie zum Beispiel (einfach klicken zum &uuml;bernehmen):<br><br>
+    <ul *ngFor="let question of example_questions">
+      <li (click)="!loading && takeOverQuestion(question)">{{ question }}</li>
+    </ul>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <label for="dropdown1">Max. Embeddings:</label>
+      <select id="dropdown1" class="form-select" [(ngModel)]="maxEmbeddings">
+        <option *ngFor="let num of maxEmbeddingsList" [value]="num">{{ num }}</option>
+      </select>
+    </div>
+    <div class="col-sm-6">
+      <label for="dropdown2">Relevanzwert:</label>
+      <select id="dropdown2" class="form-select" [(ngModel)]="relevanceValue">
+        <option *ngFor="let num of relevanceValueList" [value]="num">{{ num }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class='row mb-5'></div>
+
+  <div *ngFor="let communication of communications">
+    <div class="row card">
+      <div class="card-header" [id]="communication.index">
+        <div class="input-group mb-3">
+          <input [disabled]="communication.index != currentIndex || loading" type="text" class="form-control"
+                 [(ngModel)]="communication.question"
+                 placeholder="Bitte stellen Sie hier Ihre Frage"
+                 style="margin-right: 0.5em;">
+          <div class="input-group-append">
+            <button *ngIf="communication.index == currentIndex" type="button" class="btn btn-primary"
+                    [disabled]="loading || !communication.question" (click)="onClick()">
+              <span *ngIf="!loading">Fragen</span>
+              <span *ngIf="loading">
+              <i class="fas fa-spinner fa-spin"></i> Lade...
+            </span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-text">{{ communication.response }}</p>
+      </div>
+    </div>
+    <div class='row mb-3'></div>
+  </div>
+</div>
